@@ -10,7 +10,9 @@ import java.util.List;
 @Entity
 @Table(name = "works")
 public class Work {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -20,11 +22,14 @@ public class Work {
     private String phone;
     private String title;
     private Integer hourlyWage;
-    private String location;
-    private String detail;
-    private String status;
+    private String payType;       // "일당" or "시급"
+    private String category;      // 업종
 
-    private String imageUrl; // S3에 저장된 이미지 URL
+    private String address;
+    private String detailAddress;
+
+    private String description;
+    private String imageUrl;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
