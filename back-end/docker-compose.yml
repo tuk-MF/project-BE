@@ -10,6 +10,12 @@ services:
       - db
     env_file:
       - .env
+    environment:
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+
+
+
 
   db:
     image: postgres:15
