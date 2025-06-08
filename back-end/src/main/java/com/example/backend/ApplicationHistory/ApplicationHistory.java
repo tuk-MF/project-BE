@@ -1,7 +1,7 @@
 package com.example.backend.ApplicationHistory;
 
 
-import com.example.backend.user.User;
+import com.example.backend.user.entity.User;
 import com.example.backend.work.Work;
 import jakarta.persistence.*;
 

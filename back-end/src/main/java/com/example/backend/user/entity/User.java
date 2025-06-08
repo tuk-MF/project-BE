@@ -1,4 +1,4 @@
-package com.example.backend.user;
+package com.example.backend.user.entity;
 
 import com.example.backend.enums.UserType;
 import com.example.backend.work.Work;
