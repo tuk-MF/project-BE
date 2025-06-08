@@ -32,6 +32,11 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.postgresql:postgresql'
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.730'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.699'
+
+
 }
 
 tasks.named('test') {
