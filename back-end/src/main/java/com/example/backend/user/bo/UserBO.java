@@ -12,14 +12,7 @@ public class UserBO {
     @Autowired
     private UserRepository userRepository;
 
-    public User addUser(
-            String loginId,
-            String hashedPassword,
-            String name,
-            Integer age,
-            String phoneNumber,
-            UserType type,
-            String region) {
+    public User addUser(String loginId, String hashedPassword, String name, Integer age, String phoneNumber, UserType type, String region) {
 
         return userRepository.save(User.builder()
                 .loginId(loginId)
@@ -30,5 +23,9 @@ public class UserBO {
                 .type(type)
                 .region(region)
                 .build());
+    }
+
+    public User getUserEntityByLoginIdPassword(String loginId, String password) {
+        return userRepository.findByLoginIdAndPassword(loginId, password);
     }
 }
