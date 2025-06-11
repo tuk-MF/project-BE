@@ -80,6 +80,7 @@ public class UserRestController {
         return result;
     }
 
+    // 사용자 상세 조회
     @GetMapping("/user/info")
     public Map<String, Object> userInfo(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
@@ -112,6 +113,63 @@ public class UserRestController {
         result.put("code", 200);
         result.put("result", "성공");
         result.put("user", user);
+        return result;
+    }
+
+    // 회원정보 수정
+    @GetMapping("/user/update")
+    public Map<String, Object> userUpdate(
+            @RequestParam("name") String name,
+            @RequestParam(value = "age", required = false) Integer age,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("type") UserType type,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam("isHiring") Boolean isHiring,
+            HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 헤더에서 토큰 추출
+        String authorizationHeader = request.getHeader("Authorization");
+        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            result.put("code", 401);
+            result.put("error_message", "인증 토큰이 없습니다.");
+            return result;
+        }
+
+        // 토큰에서 사용자 id 추출
+        String token = authorizationHeader.substring(7);
+        Long userId = jwtUtil.getUserIdFromToken(token);
+        if(userId == null) {
+            result.put("code", 401);
+            result.put("error_message", "유효하지 않은 토큰입니다.");
+            return result;
+        }
+
+        // DB에서 사용자 정보 조회
+        User user = userBO.getUserEntityById(userId);
+        if(user == null) {
+            result.put("code", 401);
+            result.put("error_message", "사용자 정보를 찾을 수 없습니다.");
+            return result;
+        }
+
+        // 사용자 정보 수정
+        user.setName(name);
+        if(age != null) {
+            user.setAge(age);
+        }
+        user.setPhoneNumber(phoneNumber);
+        user.setType(type);
+        if(region != null) {
+            user.setRegion(region);
+        }
+        user.setIsHiring(isHiring);
+
+        // 사용자 정보 저장
+        userBO.updateUser(user);
+
+        result.put("code", 200);
+        result.put("result", "사용자 정보가 수정되었습니다.");
         return result;
     }
 }

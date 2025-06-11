@@ -6,6 +6,8 @@ import com.example.backend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UserBO {
 
@@ -31,5 +33,23 @@ public class UserBO {
 
     public User getUserEntityById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public void updateUser(User updatedUser) {
+        User user = userRepository.findById(updatedUser.getId()).orElse(null);
+        if(user == null)
+            return;
+
+        User newUser = user.toBuilder()
+                .name(updatedUser.getName())
+                .age(updatedUser.getAge())
+                .phoneNumber(updatedUser.getPhoneNumber())
+                .type(updatedUser.getType())
+                .region(updatedUser.getRegion())
+                .isHiring(updatedUser.getIsHiring())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        userRepository.save(newUser);
     }
 }

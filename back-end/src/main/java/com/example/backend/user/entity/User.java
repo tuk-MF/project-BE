@@ -12,8 +12,9 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
+@Setter
 @Table(name = "users")
 @Entity
 public class User {
