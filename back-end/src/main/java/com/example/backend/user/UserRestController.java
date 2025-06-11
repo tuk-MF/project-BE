@@ -5,8 +5,6 @@ import com.example.backend.common.JwtUtil;
 import com.example.backend.enums.UserType;
 import com.example.backend.user.bo.UserBO;
 import com.example.backend.user.entity.User;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
