@@ -3,11 +3,15 @@ package com.example.backend.work;
 import com.example.backend.user.User;
 import com.example.backend.ApplicationHistory.ApplicationHistory;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "works")
 public class Work {
 
