@@ -23,7 +23,7 @@ public class UserRestController {
     private UserBO userBO;
 
     // 회원가입
-    @PostMapping("/sign-up")
+    @PostMapping("/user/sign-up")
     public Map<String, Object> signUp(
             @RequestParam("loginId") String loginId,
             @RequestParam("password") String password,
@@ -53,7 +53,7 @@ public class UserRestController {
     }
 
     // 로그인
-    @PostMapping("/sign-in")
+    @PostMapping("/user/sign-in")
     public Map<String, Object> signIn(
             @RequestParam("loginId") String loginId,
             @RequestParam("password") String password) {
