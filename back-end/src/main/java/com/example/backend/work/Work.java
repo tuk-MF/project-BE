@@ -1,6 +1,6 @@
 package com.example.backend.work;
 
-import com.example.backend.user.User;
+import com.example.backend.user.entity.User;
 import com.example.backend.ApplicationHistory.ApplicationHistory;
 import jakarta.persistence.*;
 import lombok.Getter;
