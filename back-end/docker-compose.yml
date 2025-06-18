@@ -11,8 +11,7 @@ services:
     env_file:
       - .env
     environment:
-      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - SPRING_PROFILES_ACTIVE=default
 
 
   db:
