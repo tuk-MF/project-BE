@@ -35,6 +35,10 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.730'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.699'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'com.amazonaws:aws-java-sdk-s3'
+
 
     // JWT 관련 라이브러리
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
