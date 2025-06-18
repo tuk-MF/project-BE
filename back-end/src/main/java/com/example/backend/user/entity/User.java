@@ -2,7 +2,7 @@ package com.example.backend.user.entity;
 
 import com.example.backend.enums.UserType;
 import com.example.backend.work.Work;
-import com.example.backend.ApplicationHistory.ApplicationHistory;
+import com.example.backend.ApplicationHistory.entity.ApplicationHistory;
 import jakarta.persistence.*;
 import lombok.*;
 
