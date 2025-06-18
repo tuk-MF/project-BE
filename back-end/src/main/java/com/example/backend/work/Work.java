@@ -14,7 +14,6 @@ import java.util.List;
 @Setter
 @Table(name = "works")
 public class Work {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,23 +25,22 @@ public class Work {
     private String phone;
     private String title;
     private Integer hourlyWage;
-    private String payType;       // "일당" or "시급"
-    private String category;      // 업종
-
+    private String payType;
+    private String category;
     private String address;
     private String detailAddress;
-
     private String description;
     private String imageUrl;
+
+    // 지도 좌표 추가
+    private Double latitude;
+    private Double longitude;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ApplicationHistory> applications;
 
     @PrePersist
     public void prePersist() {

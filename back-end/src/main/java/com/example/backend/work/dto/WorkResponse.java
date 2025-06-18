@@ -7,17 +7,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class WorkRequest {
-    private Long userId;
-    private String phone;
+@NoArgsConstructor
+public class WorkResponse {
+    private Long id;
     private String title;
-    private Integer hourlyWage;
-    private String payType;
     private String category;
     private String address;
     private String detailAddress;
     private String description;
+    private String phone;
+    private String imageUrl;
+    private Double latitude;
+    private Double longitude;
 }
-
