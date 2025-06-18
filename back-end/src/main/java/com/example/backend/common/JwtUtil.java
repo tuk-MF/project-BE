@@ -41,4 +41,14 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    // 토큰에서 userId 추출
+    public Long getUserIdFromToken(String token) {
+        try {
+            Claims claims = validateToken(token);
+            return claims.get("userId", Long.class);
+        } catch(JwtException | IllegalArgumentException e) {
+            return null;
+        }
+    }
 }
