@@ -50,4 +50,24 @@ public class WorkController {
     public ResponseEntity<?> getAllWorks() {
         return ResponseEntity.ok(workService.getAllWorks());
     }
+    @GetMapping("/{workId}")
+    public ResponseEntity<?> getWorkById(@PathVariable Long workId) {
+        return ResponseEntity.ok(workService.getWorkById(workId));
+    }
+    @PatchMapping("/{workId}")
+    public ResponseEntity<?> updateWork(@PathVariable Long workId,
+                                        @RequestBody WorkRequest request,
+                                        @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtUtil.getUserIdFromToken(token);
+
+        if (userId == null) {
+            return ResponseEntity.status(401).body("유효하지 않은 토큰입니다.");
+        }
+
+        workService.updateWork(workId, request, userId);
+        return ResponseEntity.ok("일자리 수정 완료");
+    }
+
+
 }

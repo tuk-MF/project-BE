@@ -1,6 +1,7 @@
 package com.example.backend.work;
 
 import com.example.backend.user.entity.User;
+import com.example.backend.work.dto.WorkRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,4 +50,15 @@ public class Work {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateFromRequest(WorkRequest request) {
+        this.title = request.getTitle();
+        this.hourlyWage = request.getHourlyWage();
+        this.payType = request.getPayType();
+        this.category = request.getCategory();
+        this.address = request.getAddress();
+        this.detailAddress = request.getDetailAddress();
+        this.description = request.getDescription();
+    }
+
 }
