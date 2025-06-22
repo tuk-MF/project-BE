@@ -12,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -116,6 +118,24 @@ public class WorkService {
 
         work.updateFromRequest(request); // Work 엔티티에 이 메서드 추가 필요
         workRepository.save(work);
+    }
+    public List<WorkResponse> getWorksByUserId(Long userId) {
+        List<Work> works = workRepository.findByUserId(userId);
+        return works.stream()
+                .map(WorkResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteWorkByUser(Long userId, Long workId) {
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new RuntimeException("일자리를 찾을 수 없습니다."));
+
+        if (!work.getUser().getId().equals(userId)) {
+            throw new RuntimeException("본인이 등록한 일자리만 삭제할 수 있습니다.");
+        }
+
+        workRepository.delete(work);
     }
 
 }

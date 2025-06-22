@@ -69,5 +69,33 @@ public class WorkController {
         return ResponseEntity.ok("일자리 수정 완료");
     }
 
+    // ✅ 내가 등록한 일자리 목록 조회
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyWorks(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtUtil.getUserIdFromToken(token);
+
+        if (userId == null) {
+            return ResponseEntity.status(401).body("유효하지 않은 토큰입니다.");
+        }
+
+        return ResponseEntity.ok(workService.getWorksByUserId(userId));
+    }
+
+    // ✅ 내가 등록한 일자리 삭제
+    @DeleteMapping("/{workId}")
+    public ResponseEntity<?> deleteMyWork(@PathVariable Long workId,
+                                          @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtUtil.getUserIdFromToken(token);
+
+        if (userId == null) {
+            return ResponseEntity.status(401).body("유효하지 않은 토큰입니다.");
+        }
+
+        workService.deleteWorkByUser(userId, workId);
+        return ResponseEntity.ok("일자리 삭제 완료");
+    }
+
 
 }
