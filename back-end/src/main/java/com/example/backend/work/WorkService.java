@@ -100,5 +100,22 @@ public class WorkService {
                         work.getLongitude()
                 )).toList();
     }
+    public WorkResponse getWorkById(Long workId) {
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new RuntimeException("해당 일자리를 찾을 수 없습니다."));
+        return WorkResponse.from(work);
+    }
+
+    public void updateWork(Long workId, WorkRequest request, Long userId) {
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new RuntimeException("일자리를 찾을 수 없습니다."));
+
+        if (!work.getUser().getId().equals(userId)) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
+
+        work.updateFromRequest(request); // Work 엔티티에 이 메서드 추가 필요
+        workRepository.save(work);
+    }
 
 }
