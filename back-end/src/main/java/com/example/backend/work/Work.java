@@ -1,13 +1,11 @@
 package com.example.backend.work;
 
 import com.example.backend.user.entity.User;
-import com.example.backend.ApplicationHistory.ApplicationHistory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,8 +16,8 @@ public class Work {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private String phone;
@@ -32,11 +30,10 @@ public class Work {
     private String description;
     private String imageUrl;
 
-    // 지도 좌표 추가
     private Double latitude;
     private Double longitude;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
