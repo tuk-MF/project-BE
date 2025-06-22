@@ -1,16 +1,19 @@
 package com.example.backend.work;
 
-import com.example.backend.user.User;
-import com.example.backend.user.UserRepository;
+import com.example.backend.user.entity.User;
+import com.example.backend.user.repository.UserRepository;
 import com.example.backend.work.dto.WorkRequest;
-import com.example.backend.s3.S3Uploader;
 import com.example.backend.work.dto.WorkResponse;
+import com.example.backend.s3.S3Uploader;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -18,33 +21,50 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WorkService {
 
+
     private final WorkRepository workRepository;
     private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
     private final NaverGeocodingService geocodingService;
 
+    private static final Logger log = LoggerFactory.getLogger(WorkService.class);
 
-    public void createWork(WorkRequest request, MultipartFile image) {
-        User user = userRepository.findById(request.getUserId())
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public void createWork(WorkRequest request, MultipartFile image, Long userId) {
+        log.info("✅ 전달받은 userId: {}", userId);
+
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 정보 없음"));
 
+        log.info("✅ 조회된 user: {}", user);
+        log.info("✅ user.getId(): {}", user.getId());
+
+        if (!entityManager.contains(user)) {
+            log.info("🔁 user is not managed. merging...");
+            user = entityManager.merge(user);
+        }
+
+        log.info("✅ user is managed: {}", entityManager.contains(user));
+        log.info("✅ user.getId() after merge: {}", user.getId());
+
+        // 여기서 null이면 DB에 user가 제대로 저장 안 되어 있는 것
+        if (user.getId() == null) {
+            throw new IllegalStateException("user.getId()가 null입니다!");
+        }
+
         String imageUrl = null;
-        try {
-            imageUrl = image != null ? s3Uploader.uploadFile(image) : null;
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패", e);
+        if (image != null && !image.isEmpty()) {
+            try {
+                imageUrl = s3Uploader.uploadFile(image);
+            } catch (IOException e) {
+                log.error("이미지 업로드 실패", e);
+                throw new RuntimeException("이미지 업로드 실패", e);
+            }
         }
 
         double[] coordinates = geocodingService.getCoordinatesFromAddress(request.getAddress());
-        double latitude = coordinates[0];
-        double longitude = coordinates[1];
-
-        if (latitude == 0.0 && longitude == 0.0) {
-            // 실제 주소 좌표가 아닌 fallback 좌표일 수 있으므로 로그 남김
-            System.err.println("❗️위경도 변환 실패 또는 기본값 반환됨. 주소: " + request.getAddress());
-            // 또는 아래처럼 예외를 던져 등록 자체를 막을 수도 있음
-            // throw new RuntimeException("위경도 변환 실패: 주소 확인 필요");
-        }
 
         Work work = new Work();
         work.setUser(user);
@@ -57,12 +77,12 @@ public class WorkService {
         work.setDetailAddress(request.getDetailAddress());
         work.setDescription(request.getDescription());
         work.setImageUrl(imageUrl);
-        work.setLatitude(latitude);
-        work.setLongitude(longitude);
+        work.setLatitude(coordinates[0]);
+        work.setLongitude(coordinates[1]);
 
         workRepository.save(work);
+        log.info("✅ Work 저장 완료. 저장된 ID: {}", work.getId());
     }
-
 
     public List<WorkResponse> getAllWorks() {
         return workRepository.findAllByOrderByCreatedAtDesc()
@@ -81,21 +101,4 @@ public class WorkService {
                 )).toList();
     }
 
-    public WorkResponse getWorkById(Long id) {
-        Work work = workRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일자리가 존재하지 않습니다."));
-
-        return new WorkResponse(
-                work.getId(),
-                work.getTitle(),
-                work.getCategory(),
-                work.getAddress(),
-                work.getDetailAddress(),
-                work.getDescription(),
-                work.getPhone(),
-                work.getImageUrl(),
-                work.getLatitude(),
-                work.getLongitude()
-        );
-    }
 }
