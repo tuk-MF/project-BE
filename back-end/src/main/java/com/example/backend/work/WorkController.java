@@ -1,6 +1,7 @@
 package com.example.backend.work;
 
 import com.example.backend.ApplicationHistory.bo.ApplicationHistoryBO;
+import com.example.backend.ApplicationHistory.entity.ApplicationHistory;
 import com.example.backend.common.JwtUtil;
 import com.example.backend.user.bo.UserBO;
 import com.example.backend.user.entity.User;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,5 +107,21 @@ public class WorkController {
         }
 
         return result;
+    }
+
+    // 특정 일자리에 지원한 사용자 목록
+    @GetMapping("/applies")
+    public ResponseEntity<List<User>> getUsersByWorkId(
+            @RequestParam("workId") Long workId) {
+        // workId로 지원 내역 가져오기
+        List<ApplicationHistory> applicationHistories = applicationHistoryBO.getApplicationHistoryByWorkId(workId);
+
+        // 지원한 사용자 목록 추출
+        List<User> users = new ArrayList<>();
+        for(ApplicationHistory ah : applicationHistories) {
+            users.add(ah.getUser());
+        }
+
+        return ResponseEntity.ok(users);
     }
 }
