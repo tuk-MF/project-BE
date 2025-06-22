@@ -44,4 +44,8 @@ public class ApplicationHistoryBO {
     public List<ApplicationHistory> getApplicationHistoryByWorkId(Long workId) {
         return applicationHistoryRepository.findByWorkId(workId);
     }
+
+    public List<ApplicationHistory> getApplicationHistoryByUserId(Long userId) {
+        return applicationHistoryRepository.findByUserId(userId);
+    }
 }

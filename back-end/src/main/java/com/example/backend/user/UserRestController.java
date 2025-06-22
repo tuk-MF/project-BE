@@ -1,5 +1,7 @@
 package com.example.backend.user;
 
+import com.example.backend.ApplicationHistory.bo.ApplicationHistoryBO;
+import com.example.backend.ApplicationHistory.entity.ApplicationHistory;
 import com.example.backend.common.EncryptUtils;
 import com.example.backend.common.JwtUtil;
 import com.example.backend.enums.UserType;
@@ -7,9 +9,12 @@ import com.example.backend.user.bo.UserBO;
 import com.example.backend.user.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,6 +26,9 @@ public class UserRestController {
 
     @Autowired
     private UserBO userBO;
+
+    @Autowired
+    private ApplicationHistoryBO applicationHistoryBO;
 
     // 회원가입
     @PostMapping("/user/sign-up")
@@ -171,5 +179,15 @@ public class UserRestController {
         result.put("code", 200);
         result.put("result", "사용자 정보가 수정되었습니다.");
         return result;
+    }
+
+    // 특정 사용자의 전체 지원 내역
+    @GetMapping("/applies")
+    public ResponseEntity<List<ApplicationHistory>> getApplicationHistoryByUserId(
+            @RequestParam("userId") Long userId) {
+        // userId로 지원 내역 가져오기
+        List<ApplicationHistory> applicationHistories = applicationHistoryBO.getApplicationHistoryByUserId(userId);
+
+        return ResponseEntity.ok(applicationHistories);
     }
 }

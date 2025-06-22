@@ -8,4 +8,5 @@ import java.util.List;
 public interface ApplicationHistoryRepository extends JpaRepository<ApplicationHistory, Long> {
     boolean existsByUserIdAndWorkId(Long userId, Long workId);
     List<ApplicationHistory> findByWorkId(Long workId);
+    List<ApplicationHistory> findByUserId(Long userId);
 }
