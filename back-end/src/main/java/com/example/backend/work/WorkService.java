@@ -1,7 +1,7 @@
 package com.example.backend.work;
 
-import com.example.backend.user.entity.User;
-import com.example.backend.user.repository.UserRepository;
+import com.example.backend.user.User;
+import com.example.backend.user.UserRepository;
 import com.example.backend.work.dto.WorkRequest;
 import com.example.backend.s3.S3Uploader;
 import com.example.backend.work.dto.WorkResponse;
@@ -97,12 +97,5 @@ public class WorkService {
                 work.getLatitude(),
                 work.getLongitude()
         );
-    }
-
-    public Work getWorkEntityById(Long id) {
-        Work work = workRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일자리가 존재하지 않습니다."));
-
-        return work;
     }
 }

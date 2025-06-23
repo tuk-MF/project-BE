@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkRequest {
-    private Long userId;
     private String phone;
     private String title;
     private Integer hourlyWage;
@@ -20,4 +19,3 @@ public class WorkRequest {
     private String detailAddress;
     private String description;
 }
-

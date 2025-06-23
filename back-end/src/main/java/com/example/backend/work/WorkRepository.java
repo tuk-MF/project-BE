@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface WorkRepository extends JpaRepository<Work, Long> {
     List<Work> findAllByOrderByCreatedAtDesc();
+    List<Work> findByUserId(Long userId);
+
 }
