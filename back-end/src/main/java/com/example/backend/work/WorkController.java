@@ -67,7 +67,7 @@ public class WorkController {
 
         // 헤더에서 토큰 추출
         String authorizationHeader = request.getHeader("Authorization");
-        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             result.put("code", 401);
             result.put("error_message", "인증 토큰이 없습니다.");
             return result;
@@ -76,7 +76,7 @@ public class WorkController {
         // 토큰에서 사용자 id 추출
         String token = authorizationHeader.substring(7);
         Long userId = jwtUtil.getUserIdFromToken(token);
-        if(userId == null) {
+        if (userId == null) {
             result.put("code", 401);
             result.put("error_message", "유효하지 않은 토큰입니다.");
             return result;
@@ -84,14 +84,14 @@ public class WorkController {
 
         // DB에서 사용자 정보 조회
         User user = userBO.getUserEntityById(userId);
-        if(user == null) {
+        if (user == null) {
             result.put("code", 401);
             result.put("error_message", "사용자 정보를 찾을 수 없습니다.");
             return result;
         }
 
         boolean isApplied = applicationHistoryBO.hasApplied(userId, workId);
-        if(isApplied) {
+        if (isApplied) {
             result.put("code", 400);
             result.put("error_message", "이미 지원한 공고입니다.");
             return result;
@@ -101,7 +101,7 @@ public class WorkController {
             applicationHistoryBO.apply(userId, workId);
             result.put("code", 200);
             result.put("result", "지원이 완료되었습니다.");
-        } catch(Exception e) {
+        } catch (Exception e) {
             result.put("code", 500);
             result.put("error_message", "지원 처리 중 오류가 발생했습니다.");
         }
@@ -118,7 +118,7 @@ public class WorkController {
 
         // 지원한 사용자 목록 추출
         List<User> users = new ArrayList<>();
-        for(ApplicationHistory ah : applicationHistories) {
+        for (ApplicationHistory ah : applicationHistories) {
             users.add(ah.getUser());
         }
 
