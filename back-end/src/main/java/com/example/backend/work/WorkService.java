@@ -138,4 +138,10 @@ public class WorkService {
         workRepository.delete(work);
     }
 
+    public Work getWorkEntityById(Long id) {
+        Work work = workRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일자리가 존재하지 않습니다."));
+
+        return work;
+    }
 }

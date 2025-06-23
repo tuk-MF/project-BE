@@ -1,15 +1,23 @@
 package com.example.backend.work;
 
+import com.example.backend.ApplicationHistory.ApplicationHistoryBO;
 import com.example.backend.common.JwtUtil;
+import com.example.backend.user.bo.UserBO;
+import com.example.backend.user.entity.User;
 import com.example.backend.work.dto.WorkRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/works")
@@ -20,6 +28,12 @@ public class WorkController {
 
     private final WorkService workService;
     private final JwtUtil jwtUtil;
+
+    @Autowired
+    private UserBO userBO;
+
+    @Autowired
+    private ApplicationHistoryBO applicationHistoryBO;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createWork(@RequestPart("data") WorkRequest request,
@@ -97,5 +111,53 @@ public class WorkController {
         return ResponseEntity.ok("일자리 삭제 완료");
     }
 
+    @PostMapping("/apply")
+    public Map<String, Object> applyWork(
+            @RequestParam("workId") Long workId,
+            HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
 
+        // 헤더에서 토큰 추출
+        String authorizationHeader = request.getHeader("Authorization");
+        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            result.put("code", 401);
+            result.put("error_message", "인증 토큰이 없습니다.");
+            return result;
+        }
+
+        // 토큰에서 사용자 id 추출
+        String token = authorizationHeader.substring(7);
+        Long userId = jwtUtil.getUserIdFromToken(token);
+        if(userId == null) {
+            result.put("code", 401);
+            result.put("error_message", "유효하지 않은 토큰입니다.");
+            return result;
+        }
+
+        // DB에서 사용자 정보 조회
+        User user = userBO.getUserEntityById(userId);
+        if(user == null) {
+            result.put("code", 401);
+            result.put("error_message", "사용자 정보를 찾을 수 없습니다.");
+            return result;
+        }
+
+        boolean isApplied = applicationHistoryBO.hasApplied(userId, workId);
+        if(isApplied) {
+            result.put("code", 400);
+            result.put("error_message", "이미 지원한 공고입니다.");
+            return result;
+        }
+
+        try {
+            applicationHistoryBO.apply(userId, workId);
+            result.put("code", 200);
+            result.put("result", "지원이 완료되었습니다.");
+        } catch(Exception e) {
+            result.put("code", 500);
+            result.put("error_message", "지원 처리 중 오류가 발생했습니다.");
+        }
+
+        return result;
+    }
 }
