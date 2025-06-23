@@ -1,5 +1,7 @@
 package com.example.backend.user;
 
+import com.example.backend.ApplicationHistory.ApplicationHistory;
+import com.example.backend.ApplicationHistory.ApplicationHistoryBO;
 import com.example.backend.common.EncryptUtils;
 import com.example.backend.common.JwtUtil;
 import com.example.backend.enums.UserType;
@@ -9,7 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,6 +25,8 @@ public class UserRestController {
 
     @Autowired
     private UserBO userBO;
+    @Autowired
+    private ApplicationHistoryBO applicationHistoryBO;
 
     // 회원가입
     @PostMapping("/user/sign-up")
@@ -170,4 +176,23 @@ public class UserRestController {
         return result;
     }
 
+    // 특정 사용자의 전체 지원 내역
+    @GetMapping("/user/applies")
+    public Map<String, Object> userApplyList(@RequestParam("userId") Long userId) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 사용자 조회
+        User user = userBO.getUserEntityById(userId);
+        if (user == null) {
+            result.put("code", 404);
+            result.put("error_message", "해당 사용자를 찾을 수 없습니다.");
+            return result;
+        }
+
+        List<ApplicationHistory> applicationHistoryList = applicationHistoryBO.getApplicationHistoryByUserId(userId);
+
+        result.put("code", 200);
+        result.put("result", applicationHistoryList);
+        return result;
+    }
 }
