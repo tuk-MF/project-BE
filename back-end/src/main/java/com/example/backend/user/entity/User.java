@@ -3,6 +3,7 @@ package com.example.backend.user.entity;
 import com.example.backend.enums.UserType;
 import com.example.backend.work.Work;
 import com.example.backend.ApplicationHistory.ApplicationHistory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,9 +52,11 @@ public class User {
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Work> works;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ApplicationHistory> applications;
 
     @PrePersist
