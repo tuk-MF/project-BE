@@ -3,6 +3,7 @@ package com.example.backend.ApplicationHistory;
 
 import com.example.backend.user.entity.User;
 import com.example.backend.work.Work;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -15,10 +16,12 @@ public class ApplicationHistory {
 
     @ManyToOne
     @JoinColumn(name = "work_id")
+    @JsonIgnore
     private Work work;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)
